@@ -42,22 +42,53 @@ class BST {
   }
 }
 
+function getInorder(node, result = []) {
+  if (!node) return result
+  getInorder(node.left, result)
+  result.push(node.value)
+  getInorder(node.right, result)
+  return result
+}
+
+function getPreorder(node, result = []) {
+  if (!node) return result
+  result.push(node.value)
+  getPreorder(node.left, result)
+  getPreorder(node.right, result)
+  return result
+}
+
+function getPostorder(node, result = []) {
+  if (!node) return result
+  getPostorder(node.left, result)
+  getPostorder(node.right, result)
+  result.push(node.value)
+  return result
+}
+
+function buildPositionMap(root) {
+  if (!root) return {}
+  const bst = new BST()
+  bst.root = root
+  return bst.toPositionMap(root, 300, 40, 120)
+}
+
 function TreePage() {
   const [inputVal, setInputVal] = useState('')
   const [highlighted, setHighlighted] = useState([])
   const [message, setMessage] = useState('Insert nodes to build your BST.')
   const [traversalOrder, setTraversalOrder] = useState([])
+  const [treeRoot, setTreeRoot] = useState(null)
   const bstRef = useRef(new BST())
-  const [, forceRender] = useState(0)
   const isAnimating = useRef(false)
 
   const handleInsert = () => {
     const val = parseInt(inputVal)
     if (isNaN(val)) { setMessage('Enter a valid number.'); return }
     bstRef.current.insert(val)
+    setTreeRoot(bstRef.current.root)
     setMessage(`Inserted ${val} into the BST.`)
     setInputVal('')
-    forceRender(n => n + 1)
   }
 
   const handleKey = (e) => {
@@ -68,6 +99,7 @@ function TreePage() {
     if (isAnimating.current) return
     isAnimating.current = true
     setTraversalOrder(order)
+    setHighlighted([])
     setMessage(`${name} traversal: [${order.join(', ')}]`)
     for (let i = 0; i < order.length; i++) {
       setHighlighted(order.slice(0, i + 1))
@@ -76,40 +108,15 @@ function TreePage() {
     isAnimating.current = false
   }
 
-  const getInorder = (node, result = []) => {
-    if (!node) return result
-    getInorder(node.left, result)
-    result.push(node.value)
-    getInorder(node.right, result)
-    return result
-  }
-
-  const getPreorder = (node, result = []) => {
-    if (!node) return result
-    result.push(node.value)
-    getPreorder(node.left, result)
-    getPreorder(node.right, result)
-    return result
-  }
-
-  const getPostorder = (node, result = []) => {
-    if (!node) return result
-    getPostorder(node.left, result)
-    getPostorder(node.right, result)
-    result.push(node.value)
-    return result
-  }
-
   const reset = () => {
     bstRef.current = new BST()
+    setTreeRoot(null)
     setHighlighted([])
     setTraversalOrder([])
     setMessage('Tree cleared. Insert new nodes.')
-    forceRender(n => n + 1)
   }
 
-  const root = bstRef.current.root
-  const posMap = root ? bstRef.current.toPositionMap(root, 300, 40, 120) : {}
+  const posMap = treeRoot ? buildPositionMap(treeRoot) : {}
   const positions = Object.values(posMap)
 
   const edges = []
@@ -147,29 +154,35 @@ function TreePage() {
             placeholder="Enter number..."
             className="bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-lg text-sm w-40 focus:outline-none focus:border-red-500"
           />
-          <button onClick={handleInsert} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <button
+            onClick={handleInsert}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
             Insert
           </button>
-          <button onClick={reset} className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <button
+            onClick={reset}
+            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
             Reset
           </button>
         </div>
 
         <div className="flex gap-2 mb-6 flex-wrap">
           <button
-            onClick={() => animateTraversal(getInorder(root), 'Inorder')}
+            onClick={() => animateTraversal(getInorder(treeRoot), 'Inorder')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Inorder (Left→Root→Right)
           </button>
           <button
-            onClick={() => animateTraversal(getPreorder(root), 'Preorder')}
+            onClick={() => animateTraversal(getPreorder(treeRoot), 'Preorder')}
             className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Preorder (Root→Left→Right)
           </button>
           <button
-            onClick={() => animateTraversal(getPostorder(root), 'Postorder')}
+            onClick={() => animateTraversal(getPostorder(treeRoot), 'Postorder')}
             className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Postorder (Left→Right→Root)
@@ -198,7 +211,7 @@ function TreePage() {
         )}
 
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 overflow-x-auto">
-          {!root ? (
+          {!treeRoot ? (
             <div className="flex items-center justify-center h-32 text-gray-600 text-sm border-2 border-dashed border-gray-700 rounded-xl">
               Tree is empty — insert a number to start
             </div>
@@ -222,7 +235,6 @@ function TreePage() {
                       fill={isHighlighted ? '#EAB308' : '#1F2937'}
                       stroke={isHighlighted ? '#FDE047' : '#4B5563'}
                       strokeWidth="2"
-                      className="transition-all duration-300"
                     />
                     <text
                       x={x} y={y + 5}

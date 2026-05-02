@@ -1,16 +1,26 @@
-# React + Vite
+# DSA Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive visualizer for Data Structures and Algorithms built with React + Vite + Tailwind CSS.
 
-Currently, two official plugins are available:
+## Live Demo
+[Coming soon — deploy link here]
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
+- 5 sorting algorithms — Bubble, Selection, Insertion, Merge, Quick
+- Step-by-step animation with pause, resume, and speed control
+- Live pseudocode panel that highlights the current line
+- Stack, Queue, and Linked List visualizations
+- Binary Search Tree with inorder, preorder, postorder traversal
+- Dark / light mode with localStorage persistence
+- Fully responsive — works on mobile
 
-## React Compiler
+## Tech Stack
+- React 18 + Vite
+- React Router v6
+- Tailwind CSS v3
+- Pure JS algorithm logic
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Run Locally
+cd dsa-visualizer
+npm install
+npm run dev

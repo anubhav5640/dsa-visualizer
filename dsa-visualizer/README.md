@@ -3,7 +3,7 @@
 An interactive visualizer for Data Structures and Algorithms built with React + Vite + Tailwind CSS.
 
 ## Live Demo
-[Coming soon — deploy link here]
+https://dsa-visualizer-fawn.vercel.app
 
 ## Features
 - 5 sorting algorithms — Bubble, Selection, Insertion, Merge, Quick
